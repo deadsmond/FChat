@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+  <html lang="en">
+  
+    <head>
+    <title>FChat session</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+	
+	<script src="/../static/js/jquery.min.js"></script>
+	<script src="/../static/js/bootstrap.min.js"></script>
+	<script src="/../static/js/main.js"></script>
+
+    <link href="/../static/css/signup.css" rel="stylesheet">
+	<link href="/../static/css/jumbotron.css" rel="stylesheet">
+    
+  </head>
+  
+  <body>
+	<div class="container">
+		<div class="jumbotron">
+	  
+			<h3 style='color: #ccc;font-size: 30px;'>Room is empty for now..</h3>
+			<div class="message_holder"></div>
+
+			<form action="" method="POST">
+			  <input type="text" class="username" placeholder="User Name"/>
+			  <input type="text" class="message" placeholder="Messages"/>
+			  <input type="submit" value="Send"/>
+			</form>
+
+			<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+			<script type="text/javascript">
+			  var socket = io.connect('http://' + document.domain + ':' + location.port);
+			  socket.on( 'connect', function() {
+				socket.emit( 'my event', {
+				  data: 'User Connected'
+				} )
+				var form = $( 'form' ).on( 'submit', function( e ) {
+				  e.preventDefault()
+				  let user_name = $( 'input.username' ).val()
+				  let user_input = $( 'input.message' ).val()
+				  socket.emit( 'my event', {
+					user_name : user_name,
+					message : user_input
+				  } )
+				  $( 'input.message' ).val( '' ).focus()
+				} )
+			  } )
+			  socket.on( 'my response', function( msg ) {
+				console.log( msg )
+				if( typeof msg.user_name !== 'undefined' ) {
+				  $( 'h3' ).remove()
+				  $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
+				}
+			  })
+			</script>
+		</div>
+	<footer class="footer">
+		<p>&copy; FChat Group 2018</p>
+	</footer>
+	</div>
+  </body>
+</html>
